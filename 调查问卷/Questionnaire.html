@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title></title>
+	<style type="text/css">
+		ul{
+			list-style: none;
+			margin: 0;
+			padding: 0;
+		}
+		.item{
+			border: 2px solid #e4393c;
+			padding: 10px;
+			margin-bottom: 15px;
+		}
+		.option-flag{
+			padding-right: 10px;
+		}
+	</style>
+</head>
+<body>
+
+	<div id="box" class="box">
+	</div>
+
+
+	<button id="commit">提交答案</button>
+
+	<script type="text/javascript" src="./jquery-3.3.1.min.js"></script>
+
+	<script type="text/javascript">
+		
+		$(function () {
+
+			//答案选项标识
+			var answerFlag = ['C', 'D', 'A', 'B'];
+			//题目选项
+			var sujectItem = {
+				'A1': [
+					'王者荣耀',
+					'天天消消乐',
+					'天天酷跑',
+					'天天斗地主'
+				],
+				'A2': [
+					'上海',
+					'深圳',
+					'北京',
+					'北平'
+				],
+				'A3': [
+					'阿尔卑斯',
+					'珠穆朗玛峰',
+					'白云山',
+					'长白山'
+				],
+				'A4': [
+					'广州塔',
+					'五羊',
+					'越秀公园',
+					'白云山'
+				]
+			};
+			//题目
+			var subjects = [
+				{
+					title: '我国首都是', id: 'A2'
+				},
+				{
+					title: '广州的标志建筑是', id: 'A4'
+				},
+				{
+					title: '你最喜欢的游戏是', id: 'A1'
+				},
+				{
+					title: '世界最高山峰是', id: 'A3'
+				}
+			];
+			//题目的答案
+			var subjectAnswer = [
+				{id: 'A1', answer:'ABCD'},
+				{id: 'A2', answer:'C'},
+				{id: 'A3', answer:'B'},
+				{id: 'A4', answer:'A'}
+			];
+			answerFlag.sort();
+			//遍历题目 subjects 查找选项 sujectItem
+			for (var i = 0; i < subjects.length; i++) {
+				//获取题目的id
+				var id = subjects[i].id;
+				//获取相应题目选项
+				var sub = sujectItem[id];
+				//将题目选项添加到 subjects
+				subjects[i].subject = sub;
+			}
+			//排序subjects
+			subjects.sort(function (a, b) {
+				return a.id.slice(1) - b.id.slice(1);
+			})
+			//生成页面的题目
+			for (var j = 0; j < subjects.length; j++) {
+				//生成当前的选项
+				var option = '<ul>';
+				for (var k = 0; k < answerFlag.length; k++) {
+					option += '<li><input type="checkbox" name="' + answerFlag[k] + '"><span class="option-flag">' + answerFlag[k] + '</span><span class="option-content">' + subjects[j].subject[k] + '</span></li>'
+				}
+				option += '</ul>';
+				var item = $('<div id="' + subjects[j].id + '" class="item">' +
+											'<div class="subject">'+
+												'<span>' + (j + 1) + '、' + subjects[j].title + '</span>'+
+												'<span>(</span>'+
+												'<span class="answer"></span>'+
+												'<span>)</span>'+
+											'</div>'+
+											'<div class="option">'+ option +'</div>'+
+										'</div>');
+
+				//将生成的题目添加页面box
+				$('#box').append(item);
+			}
+			//为所有checkbox绑定change事件
+			$('input[type="checkbox"]').change(function () {
+				//获取当前节点的父级元素
+				var parentItem = $(this).parents('.item');
+				//获取所有当前勾选的复选框
+				var checks = parentItem.find('input[type="checkbox"]:checked');
+				// console.log('checks ==> ', checks);
+				//获取checks的name属性值
+				var clientAnswer = [];
+				for (var i = 0; i < checks.length; i++) {
+					clientAnswer.push($(checks[i]).attr('name'));
+				}
+				// console.log('clientAnswer ==> ', clientAnswer);
+				// 获取当前显示答案的元素
+				var answer = clientAnswer.join('');
+				parentItem.find('.answer').text(answer);
+			})
+			//为commit按钮绑定点击事件
+			var clientLastAnswer = [];
+			$('#commit').click(function () {
+				//获取用户答案
+				var $item = $('.item');
+				for (var i = 0; i < $item.length; i++) {
+					var item = $($item[i]);
+					var o ={
+						id: item.attr('id'),
+						answer: item.find('.answer').text()
+					};
+					clientLastAnswer.push(o);
+				}
+				console.log('clientLastAnswer ==> ', clientLastAnswer);
+				//验证题目答案
+				for (var m = 0; m < subjectAnswer.length; m++) {
+					if (subjectAnswer[m].id == clientLastAnswer[m].id && subjectAnswer[m].answer == clientLastAnswer[m].answer) {
+						console.log('题目' + subjectAnswer[m].id + '正确');
+					} else {
+						console.log('题目' + subjectAnswer[m].id + '错误');
+					}
+				}
+			})
+		})
+
+	</script>
+</body>
+</html>
