@@ -1,0 +1,67 @@
+{
+	"title": [
+		{"id": "id"},
+		{"name": "名称"},
+		{"price": "价格"},
+		{"code": "编号"},
+		{"weight": "重量"},
+		{"company": "生产公司"},
+		{"date": "日期"},
+		{"comment": "备注"}
+	],
+
+	"data": [
+		{
+			"id": "asd001",
+			"name": "电脑",
+			"price": 1365,
+			"code": "ax00010",
+			"weight": "12kg",
+			"company": "某22某公司",
+			"date": "2018-10-12",
+			"comment": "几乎覆盖是否合格"
+		},
+		{
+			"id": "asd002",
+			"name": "电脑",
+			"price": 1365,
+			"code": "ax00010",
+			"weight": "1222kg",
+			"company": "某2公司",
+			"date": "2018-10-12",
+			"comment": "几乎覆盖2是2否合格"
+		},
+
+		{
+			"id": "asd003",
+			"name": "电脑",
+			"price": 1365,
+			"code": "ax00010",
+			"weight": "12kg",
+			"company": "某某公司",
+			"date": "2018-10-12",
+			"comment": "几乎覆盖是否合格"
+		},
+
+		{
+			"id": "asd004",
+			"name": "电脑",
+			"price": 1365,
+			"code": "ax00010",
+			"weight": "12kg",
+			"company": "某某公司",
+			"date": "2018-10-12",
+			"comment": "几乎覆盖是否合格1"
+		},
+		{
+			"id": "asd005",
+			"name": "电脑3",
+			"price": 133465,
+			"code": "ax0df0010",
+			"weight": "12kg",
+			"company": "某某ff公司",
+			"date": "2018-10-12",
+			"comment": "几乎覆盖是否合格2"
+		}
+	]
+}

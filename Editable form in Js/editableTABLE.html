@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title></title>
+	<style type="text/css">
+		table,tr,td,th{
+			border: 1px solid #e4393c;
+		}
+
+		table{
+			border-collapse: collapse;
+		}
+
+		th,td{
+			width: 120px;
+			padding: 5px;
+			height: 30px;
+		}
+		.edit{
+			width: 120px;
+			height: 100%;
+			white-space: nowrap;
+			overflow-x: hidden;
+			text-align: center;
+			line-height: 30px;
+			outline: none;
+			font-size: 14px;
+		}
+
+		.box{
+			min-width: 1200px;
+			max-width: 1300px;
+		}
+
+		.active{
+			background-color: #fd3453;
+			color: #fff;
+		}
+
+	</style>
+</head>
+<body>
+
+	<div id="box" class="box">
+		<button id="save">保存</button>
+	</div>
+
+
+	<script type="text/javascript" src="./jquery-3.3.1.min.js"></script>
+	<script type="text/javascript">
+		
+		$(function () {
+
+			//保存原始数据
+			var originData = null;
+			var $box = $('#box');
+			//保存修改的数据
+			var allData = [];
+			$('#save').on('click', function () {
+				var $trs = $('tbody>tr[name="ischange"]');
+				if ($trs.length == 0) {
+					return;
+				}
+				//保存本次编辑过的数据
+				var arr = [];
+				//获取修改过的行的数据
+				$trs.each(function (i, v) {
+				//本条数据
+					var o = {
+
+					};
+					var $edits = $(v).find('.edit');
+					var id = $edits.eq(0).attr('name');
+					var idText = $edits.eq(0).text();
+					o[id] = idText;
+					//匹配当前id的数据
+					var currentOriginData = null;
+					for (var n = 0; n < originData.length; n++) {
+						if (idText == originData[n].id) {
+							currentOriginData = originData[n];
+							break;
+						}
+					}
+					for (var i = 1; i < $edits.length; i++) {
+						var currentName = $edits.eq(i).attr('name');
+						// console.log('currentName ==> ', currentName);
+						var currentText = $edits.eq(i).text();
+						//获取当前键名的原始数据的值
+						var originText = currentOriginData[currentName];
+						if (currentText != originText) {
+							o[currentName] = currentText;
+							currentOriginData[currentName] = currentText;
+						}
+					}
+					arr.push(o);
+					console.log('currentOriginData ==> ', currentOriginData);
+					console.log('originData ==> ', originData);
+					//移除编辑过的行的name
+					$(v).removeAttr('name');
+				})
+				allData.push(arr);
+				console.log('allData ==> ', allData);
+			})
+
+			$.ajax({
+				type: 'GET',
+				url: './data.json',
+				dataType: 'json',
+				success: function (data) {
+					//保存原始数据
+					originData = data.data;
+					var dataTitle = data.title;
+					//创建表格元素
+					var $table = $('<table></table>');
+					//生成表头
+					var $thead = $('<thead><tr></tr></thead>');
+					for (var i = 0; i < dataTitle.length; i++) {
+						//获取对象的键名, 返回一个数组
+						var keys = Object.keys(dataTitle[i]);
+						var $th = $('<th name="' + keys[0] + '">' + dataTitle[i][keys[0]] + '</th>');
+						$thead.find('tr').append($th);
+					}
+					$table.append($thead);
+					//生成表体
+					var $tbody = $('<tbody></tbody>');
+					originData.forEach(function (value, index) {
+						//value: 数组的元素
+						//index: 下标
+						//创建行
+						var $tr = $('<tr></tr>');
+						for (var key in value) {
+							//创建单元格
+							var $td = $('<td><div class="edit" name="' + key + '" contenteditable="' + !(key == 'id') + '">' + value[key] + '</div></td>');
+							$tr.append($td);
+						}
+						$tbody.append($tr);
+					})
+					$table.append($tbody);
+					$box.append($table);
+					//绑定事件
+					$('.edit').on('focus', function () {
+						$(this).parent().addClass('active');
+						var oldValue = $(this).text();
+						$(this).data('old', oldValue);
+					})
+
+					$('.edit').on('blur', function () {
+						$(this).parent().removeClass('active');
+							var oldValue = $(this).data('old');
+							var newValue = $(this).text();
+							var trParent = $(this).parents('tr');
+							if (oldValue != newValue && !trParent.attr('name')) {
+							trParent.attr('name', 'ischange');
+						}
+					})
+				}
+			})
+		})
+
+	</script>
+</body>
+</html>
